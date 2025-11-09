@@ -6,22 +6,22 @@ addpath(genpath(pwd));
 %% Initialize
 u_max = 0.1; % Thrust
 mu = 1; % Gravitaional Parameter
-mu_dim = 1.327e11; % Suns Gravitational Parameter, non dimensionalizing factor for this problem, set mu of central body to 1 so whenever mu is used, divide the value by this guy
-AU = 149597898;
-m0 = 2;
-tf = 5;
-N = 15; % Current CVXPyGEN solver built for N = 15 and FOH
-velocity_nd = sqrt(mu_dim/AU); % Non dimensional velocity units, 
+mu_dim = 1.327e11; % Suns Gravitational Parameter, non dimensionalizing factor for this problem
+AU = 149597898; % Astronomical Unit
+m0 = 2; % Starting Mass
+tf = 5; % T final
+N = 15; % Current CVXPyGEN solver built for N = 15 and FOH, breaks time into 15 steps, optimal state is found in each state
+velocity_nd = sqrt(mu_dim/AU); % Non dimensional velocity in km/s, divide all velocities by this facotr to make them non dimensional
 
 %% Earth data
-a_earth = 1.49579e8 / AU;
-e_earth = 1.65519e-2;
-inc_earth = 4.64389e-3;
-Omega_earth = 1.98956e2;
-omega_earth = 2.62960e2;
-M_earth0 = deg2rad(3.58040e2);
-M_earth = @(t) sqrt(mu / a_earth^3) * t + M_earth0;
-E_earth = @(t) mean_to_eccentric_anomaly(M_earth(t), e_earth);
+a_earth = 1.49579e8 / AU; % Semi Major Axis Earth 
+e_earth = 1.65519e-2; % Eccentricity Earth 
+inc_earth = 4.64389e-3; % Inclination Earth
+Omega_earth = 1.98956e2; % Longitude of Ascending Node Earth 
+omega_earth = 2.62960e2; % Argument of Periapsis Earth
+M_earth0 = deg2rad(3.58040e2); % Initial Mean Anomaly Earth
+M_earth = @(t) sqrt(mu / a_earth^3) * t + M_earth0; % Mean Anomaly Earth
+E_earth = @(t) mean_to_eccentric_anomaly(M_earth(t), e_earth); % 
 nu_earth = @(t) rad2deg(eccentric_to_true_anomaly(E_earth(t), e_earth));
 
 %% Asteroid data

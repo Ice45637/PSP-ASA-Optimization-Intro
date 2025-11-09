@@ -6,39 +6,41 @@ addpath(genpath(pwd));
 %% Initialize
 u_max = 0.1; % Thrust
 mu = 1; % Gravitaional Parameter
-mu_dim = 1.327e11; % Suns Gravitational Parameter, non dimensionalizing factor for this problem, set mu of central body to 1 so whenever mu is used, divide the value by this guy
+mu_dim = 1.327e11; % Suns Gravitational Parameter, non dimensionalizing factor for this problem
 AU = 149597898; % Astronomical Unit
 m0 = 2; % Starting Mass
 tf = 5; % T final
-N = 15; % Current CVXPyGEN solver built for N = 15 and FOH
-velocity_nd = sqrt(mu_dim/AU); % Non dimensional velocity in km/s, so divide all velocities by this facotr to make them non dimensional
+N = 15; % Current CVXPyGEN solver built for N = 15 and FOH, breaks time into 15 steps, optimal state is found in each state
+velocity_nd = sqrt(mu_dim/AU); % Non dimensional velocity in km/s, divide all velocities by this facotr to make them non dimensional
 
 %% Earth data
-a_earth = 1.49579e8 / AU;
-e_earth = 1.65519e-2;
-inc_earth = 4.64389e-3;
-Omega_earth = 1.98956e2;
-omega_earth = 2.62960e2;
-M_earth0 = deg2rad(3.58040e2);
-M_earth = @(t) sqrt(mu / a_earth^3) * t + M_earth0;
-E_earth = @(t) mean_to_eccentric_anomaly(M_earth(t), e_earth);
-nu_earth = @(t) rad2deg(eccentric_to_true_anomaly(E_earth(t), e_earth));
+a_earth = 1.49579e8 / AU; % Semi Major Axis Earth 
+e_earth = 1.65519e-2; % Eccentricity Earth 
+inc_earth = 4.64389e-3; % Inclination Earth
+Omega_earth = 1.98956e2; % Longitude of Ascending Node Earth 
+omega_earth = 2.62960e2; % Argument of Periapsis Earth
+M_earth0 = deg2rad(3.58040e2); % Initial Mean Anomaly Earth
+M_earth = @(t) sqrt(mu / a_earth^3) * t + M_earth0; % Mean Anomaly Earth
+E_earth = @(t) mean_to_eccentric_anomaly(M_earth(t), e_earth); % Eccentric Anomaly Earth
+nu_earth = @(t) rad2deg(eccentric_to_true_anomaly(E_earth(t), e_earth)); % True Anomaly Earth
+
+% https://en.wikipedia.org/wiki/Orbital_elements
 
 %% Asteroid data
-a_ast = 3.073;
-e_ast = 1.177e-1;
-inc_ast = 17.45;
-Omega_ast = 14.03;
-omega_ast = 1.830;
-M_ast0 = deg2rad(305.3);
-M_ast = @(t) sqrt(mu / a_ast^3) * t + M_ast0;
-E_ast = @(t) mean_to_eccentric_anomaly(M_ast(t), e_ast);
-nu_ast = @(t) eccentric_to_true_anomaly(E_ast(t), e_ast);
+a_ast = 3.073; % Semi Major Axis Asteroid 
+e_ast = 1.177e-1; % Eccentricity Asteroid 
+inc_ast = 17.45; % Inclination Asteroid
+Omega_ast = 14.03; % Longitude of Ascending Node Asteroid 
+omega_ast = 1.830; % Argument of Periapsis Asteroid
+M_ast0 = deg2rad(305.3); % Initial Mean Anomaly Asteroid
+M_ast = @(t) sqrt(mu / a_ast^3) * t + M_ast0; % Mean Anomaly Asteroid
+E_ast = @(t) mean_to_eccentric_anomaly(M_ast(t), e_ast); % Eccentric Anomaly Asteroid
+nu_ast = @(t) eccentric_to_true_anomaly(E_ast(t), e_ast); % True Anomaly Asteroid
 
 %% Initial conditions
-x_keplerian_earth = @(t) [a_earth e_earth inc_earth*pi/180 Omega_earth*pi/180 omega_earth*pi/180 M_earth(t)]';
+x_keplerian_earth = @(t) [a_earth, e_earth, inc_earth*pi/180, Omega_earth*pi/180, omega_earth*pi/180, M_earth(t)]';
 x_cartesian_earth = @(t) keplerian_to_cartesian(x_keplerian_earth(t), [], mu);
-x_keplerian_ast = @(t) [a_ast e_ast inc_ast*pi/180 Omega_ast*pi/180 omega_ast*pi/180 M_ast(t)]';
+x_keplerian_ast = @(t) [a_ast, e_ast, inc_ast*pi/180, Omega_ast*pi/180, omega_ast*pi/180, M_ast(t)]';
 x_cartesian_ast = @(t) keplerian_to_cartesian(x_keplerian_ast(t), [], mu);
 
 t_plot = linspace(0, tf, 100);
