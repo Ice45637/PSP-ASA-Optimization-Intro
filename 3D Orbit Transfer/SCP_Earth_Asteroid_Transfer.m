@@ -4,14 +4,14 @@ addpath(genpath(pwd));
 % CVXPyGEN SOLVER WAS BUILT FOR THAT
 
 %% Initialize
-u_max = 0.1;
-mu = 1;
-mu_dim = 1.327e11;
-AU = 149597898;
-m0 = 2;
-tf = 5;
+u_max = 0.1; % Thrust
+mu = 1; % Gravitaional Parameter
+mu_dim = 1.327e11; % Suns Gravitational Parameter, non dimensionalizing factor for this problem, set mu of central body to 1 so whenever mu is used, divide the value by this guy
+AU = 149597898; % Astronomical Unit
+m0 = 2; % Starting Mass
+tf = 5; % T final
 N = 15; % Current CVXPyGEN solver built for N = 15 and FOH
-velocity_nd = sqrt(mu_dim/AU);
+velocity_nd = sqrt(mu_dim/AU); % Non dimensional velocity in km/s, so divide all velocities by this facotr to make them non dimensional
 
 %% Earth data
 a_earth = 1.49579e8 / AU;
